@@ -45,7 +45,8 @@ const ingredientsData = [
   },
 ];
 
-function ListingDetailsScreen(props) {
+function ListingDetailsScreen({ route }) {
+  const listing = route.params;
   return (
     <View>
       <View style={styles.backIcon}>
@@ -57,10 +58,10 @@ function ListingDetailsScreen(props) {
           />
         </TouchableOpacity>
       </View>
-      <Image style={styles.image} source={require("../assets/recipe.jpg")} />
+      <Image style={styles.image} source={listing.image} />
       <View style={styles.detailsContainer}>
         <View style={styles.name}>
-          <Text style={styles.title}>Spaghetti with Shrim Sauce</Text>
+          <Text style={styles.title}>{listing.title}</Text>
           <ListItem
             image={require("../assets/men.jpg")}
             title="John Doe"
