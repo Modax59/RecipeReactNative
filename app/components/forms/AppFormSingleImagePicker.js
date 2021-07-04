@@ -6,7 +6,6 @@ import ImageInput from "../ImageInput";
 
 function AppFormSingleImagePicker({ name }) {
   const { errors, setFieldValue, touched, values } = useFormikContext();
-  const imageUris = values[name];
   const handleAdd = (uri) => {
     setFieldValue(name, uri);
   };

@@ -7,7 +7,6 @@ import PickerItem from "./PickerItem";
 
 function AppPicker({icon, items, numberOfColumns = 1, PickerItemComponent = PickerItem, onSelectItem, selectedItem, placeholder, width= "100%"}) {
     const [modalVisible, setModalVisible] = useState(false);
-
     return (
         <>
             <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
@@ -20,7 +19,7 @@ function AppPicker({icon, items, numberOfColumns = 1, PickerItemComponent = Pick
                             style={styles.icon}
                         />
                     )}
-                    {selectedItem ? (<Text style={styles.text}>{selectedItem.label}</Text>) : (
+                    {selectedItem ? (<Text style={styles.text}>{selectedItem.name}</Text>) : (
                         <Text style={styles.placeholder}>{placeholder}</Text>)}
 
                     <MaterialCommunityIcons
@@ -33,10 +32,10 @@ function AppPicker({icon, items, numberOfColumns = 1, PickerItemComponent = Pick
             <Modal visible={modalVisible} animationType="slide">
                 <Screen>
                     <Button title="Close" onPress={() => setModalVisible(false)}/>
-                    <FlatList numColumns={numberOfColumns} data={items} keyExtractor={item => item.value.toString()}
+                    <FlatList numColumns={numberOfColumns} data={items} keyExtractor={item => item.id.toString()}
                               renderItem={({item}) => <PickerItemComponent
                                                             item={item}
-                                                            label={item.label}
+                                                            label={item.name}
                                                             onPress={() => {
                                                                 setModalVisible(false);
                                                                 onSelectItem(item);
@@ -61,10 +60,10 @@ const styles = StyleSheet.create({
     placeholder: {
         color: defaultStyles.colors.meduim,
         flex: 1,
-        fontSize: 16,
+        fontSize: 18,
     },
     text: {
-        fontSize: 16,
+        fontSize: 18,
         flex: 1
     },
 })

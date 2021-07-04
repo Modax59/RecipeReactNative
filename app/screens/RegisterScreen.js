@@ -1,51 +1,81 @@
-import React from "react";
-import { StyleSheet } from "react-native";
+import React, {useState} from "react";
+import {StyleSheet} from "react-native";
 import * as Yup from "yup";
 
 import Screen from "../components/Screen";
-import { AppForm, AppFormField, SubmitButton } from "../components/forms";
+import {AppForm, AppFormField, ErrorMessage, SubmitButton} from "../components/forms";
+import usersApi from "../api/users";
+import useAuth from "../auth/useAuth";
+import authApi from '../api/auth'
+import useApi from "../hooks/useApi";
+import ActivityIndicator from "../components/ActivityIndicator";
 
 const validationSchema = Yup.object().shape({
-  email: Yup.string().required().email().label("Email"),
-  password: Yup.string().required().min(4).label("Password"),
+    email: Yup.string().required().email().label("Email"),
+    password: Yup.string().required().min(6).label("Password")
 });
 
 function RegisterScreen() {
-  return (
-    <Screen style={styles.container}>
-      <AppForm
-        initialValues={{ email: "", password: "" }}
-        onSubmit={(values) => console.log(values)}
-        validationSchema={validationSchema}
-      >
-        <AppFormField
-          autoCorrect={false}
-          autoCapitalize="none"
-          icon="email"
-          keyboard-type="email-address"
-          name="email"
-          placeholder="email"
-          textContentType="emailAddress"
-        />
-        <AppFormField
-          autoCorrect={false}
-          autoCapitalize="none"
-          icon="lock"
-          name="password"
-          placeholder="password"
-          secureTextEntry
-          textContentType="password"
-        />
-        <SubmitButton title="Register" />
-      </AppForm>
-    </Screen>
-  );
+    const registerApi = useApi(usersApi.register);
+    const loginApi = useApi(authApi.login);
+    const auth = useAuth();
+    const [error, setError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState();
+    const handleSubmit = async (userInfo) => {
+        const result = await registerApi.request(userInfo);
+        if (!result.ok) {
+            setError(true)
+            if (result.data) setErrorMessage(result.data['detail']);
+            else {
+                setErrorMessage('Une erreur est survenue');
+            }
+            return;
+        }
+
+        setError(false);
+        const {data: authToken} = await loginApi.request(userInfo.email, userInfo.password);
+        auth.logIn(authToken);
+    };
+
+    return (
+        <>
+            <ActivityIndicator visible={registerApi.loading || loginApi.loading}/>
+            <Screen style={styles.container}>
+                <AppForm
+                    initialValues={{email: "", password: ""}}
+                    onSubmit={handleSubmit}
+                    validationSchema={validationSchema}
+                >
+                    <ErrorMessage error={errorMessage} visible={error}/>
+                    <AppFormField
+                        autoCorrect={false}
+                        autoCapitalize="none"
+                        icon="email"
+                        keyboard-type="email-address"
+                        name="email"
+                        placeholder="email"
+                        textContentType="emailAddress"
+                    />
+                    <AppFormField
+                        autoCorrect={false}
+                        autoCapitalize="none"
+                        icon="lock"
+                        name="password"
+                        placeholder="password"
+                        secureTextEntry
+                        textContentType="password"
+                    />
+                    <SubmitButton title="Register"/>
+                </AppForm>
+            </Screen>
+        </>
+    );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 10,
-  },
+    container: {
+        padding: 10,
+    },
 });
 
 export default RegisterScreen;

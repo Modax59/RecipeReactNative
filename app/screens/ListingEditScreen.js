@@ -9,18 +9,17 @@ import {
   AppFormPicker,
 } from "../components/forms";
 import CategoryPickerItem from "../components/CategoryPickerItem";
-import AppFormImagePicker from "../components/forms/AppFormImagePicker";
-import * as Location from "expo-location";
 import useLocation from "../hooks/useLocation";
 import AppFormSingleImagePicker from "../components/forms/AppFormSingleImagePicker";
-import ImageInput from "../components/ImageInput";
+import recipes from "../api/recipes";
+import UploadScreen from "./UploadScreen";
+
 
 const validationSchema = Yup.object().shape({
   title: Yup.string().required().min(1).label("Title"),
   price: Yup.number().required().min(1).max(10000).label("price"),
   description: Yup.string().label("Description"),
   category: Yup.object().required().nullable().label("Category"),
-  images: Yup.mixed().required("Vous devez selectionner une image"),
 });
 
 const categories = [
@@ -30,9 +29,23 @@ const categories = [
 ];
 
 function ListingEditScreen() {
-  const location = useLocation();
+    const location = useLocation();
+    const [uploadVisible, setUploadVisible] = useState(false);
+    const [progress, setProgress] = useState(0);
+
+    const handleSubmit = async ({images}, {resetForm}) => {
+        setProgress(0);
+        setUploadVisible(true);
+        const result = await recipes.addImageRecipe(images, 1, (progress) => setProgress(progress));
+        if (!result.ok){
+            setUploadVisible(false);
+            return alert("Un problème est survenue lors de l'envoie")
+        }
+        resetForm();
+    }
   return (
     <Screen style={styles.container}>
+        <UploadScreen onDone={() => setUploadVisible(false)} progress={progress} visible={uploadVisible} />
       <AppForm
         initialValues={{
           title: "",
@@ -41,7 +54,7 @@ function ListingEditScreen() {
           category: null,
           images: null,
         }}
-        onSubmit={(values) => console.log(location)}
+        onSubmit={handleSubmit}
         validationSchema={validationSchema}
       >
         <AppFormSingleImagePicker name="images" />

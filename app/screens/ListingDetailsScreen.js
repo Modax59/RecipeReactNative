@@ -1,7 +1,6 @@
 import React from "react";
 import {
   FlatList,
-  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -11,6 +10,7 @@ import ListIngredients from "../components/ListIngredients";
 import ListItem from "../components/ListItem";
 import colors from "../config/colors";
 import { Ionicons } from "@expo/vector-icons";
+import {Image} from "react-native-expo-image-cache";
 
 const ingredientsData = [
   {
@@ -58,7 +58,7 @@ function ListingDetailsScreen({ route }) {
           />
         </TouchableOpacity>
       </View>
-      <Image style={styles.image} source={listing.image} />
+      <Image style={styles.image} tint="light" preview={{uri: "http://127.0.0.1:8000"+listing.fileUrl}} uri={"http://127.0.0.1:8000" + listing.fileUrl} />
       <View style={styles.detailsContainer}>
         <View style={styles.name}>
           <Text style={styles.title}>{listing.title}</Text>

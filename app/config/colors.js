@@ -13,4 +13,5 @@ export default {
   black_blue: "#151e41",
   red: "#ff5252",
   dark: "#0c0c0c",
+  test: "#B4BBD3"
 };
