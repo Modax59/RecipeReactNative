@@ -14,6 +14,7 @@ import SearchBar from "../components/homeScreen/SearchBar";
 import CheckRecipes from "../components/homeScreen/CheckRecipes";
 import TrendingRecipe from "../components/homeScreen/TrendingRecipe";
 import CategoryHeader from "../components/homeScreen/CategoryHeader";
+import appTheme from "../constants/theme";
 
 function HomeScreen({ navigation }) {
   const { colors } = useTheme();
@@ -58,6 +59,9 @@ function HomeScreen({ navigation }) {
           renderItem={({ item }) => {
             return (
               <HorizontalCard
+                styleCard={{
+                  marginHorizontal: appTheme.SIZES.padding,
+                }}
                 item={item}
                 image={"http://127.0.0.1:8000" + item.fileUrl}
                 onPress={() =>

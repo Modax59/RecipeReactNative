@@ -18,8 +18,8 @@ export default function TrendingCard({
       <Image
         style={{
           resizeMode: "cover",
-          width: 250,
-          height: 350,
+          width: 215,
+          height: 315,
           borderRadius: appTheme.SIZES.radius,
         }}
         tint="light"

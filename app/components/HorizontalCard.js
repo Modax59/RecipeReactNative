@@ -42,6 +42,7 @@ function HorizontalCard({ item, styleCard, onPress, image }) {
             color: colors.primary,
             ...appTheme.FONTS.h2,
             fontWeight: "bold",
+            fontSize: 18,
           }}
         >
           {item.name}
