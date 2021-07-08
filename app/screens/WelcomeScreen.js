@@ -5,6 +5,7 @@ import AppButtonEmpty from "../components/AppButtonEmpty";
 import colors from "../config/colors";
 import { LinearGradient } from "expo-linear-gradient";
 import routes from "../navigation/routes";
+import appTheme from "../constants/theme";
 
 function WelcomeScreen({ navigation }) {
   return (
@@ -33,12 +34,23 @@ function WelcomeScreen({ navigation }) {
           <View style={styles.buttonContainer}>
             <AppButton
               title="Login"
-              color="green"
+              buttonContainerStyle={{
+                paddingVertical: 18,
+                borderRadius: appTheme.SIZES.radius,
+              }}
+              color={[appTheme.COLORS.darkGreen, appTheme.COLORS.lime]}
               onPress={() => navigation.navigate(routes.LOGIN)}
             />
-            <AppButtonEmpty
+            <AppButton
               title="Sign Up"
-              border="green"
+              buttonContainerStyle={{
+                paddingVertical: 18,
+                marginTop: 18,
+                borderRadius: appTheme.SIZES.radius,
+                borderColor: appTheme.COLORS.darkLime,
+                borderWidth: 1,
+              }}
+              color={[]}
               onPress={() => navigation.navigate(routes.REGISTER)}
             />
           </View>

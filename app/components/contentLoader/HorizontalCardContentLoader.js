@@ -8,6 +8,7 @@ function HorizontalCardContentLoader() {
     <>
       {[1, 2, 3, 4].map((value) => (
         <ContentLoader
+          key={value}
           viewBox="0 0 462 160"
           height={160}
           width={462}

@@ -13,7 +13,7 @@ import useLocation from "../hooks/useLocation";
 import AppFormSingleImagePicker from "../components/forms/AppFormSingleImagePicker";
 import recipes from "../api/recipes";
 import UploadScreen from "./UploadScreen";
-
+import appTheme from "../constants/theme";
 
 const validationSchema = Yup.object().shape({
   title: Yup.string().required().min(1).label("Title"),
@@ -22,30 +22,29 @@ const validationSchema = Yup.object().shape({
   category: Yup.object().required().nullable().label("Category"),
 });
 
-const categories = [
-  { label: "Furniture", value: 1, backgroundColor: "red", icon: "apps" },
-  { label: "Clothing", value: 2, backgroundColor: "green", icon: "email" },
-  { label: "Camera", value: 3, backgroundColor: "blue", icon: "lock" },
-];
-
 function ListingEditScreen() {
-    const location = useLocation();
-    const [uploadVisible, setUploadVisible] = useState(false);
-    const [progress, setProgress] = useState(0);
+  const [uploadVisible, setUploadVisible] = useState(false);
+  const [progress, setProgress] = useState(0);
 
-    const handleSubmit = async ({images}, {resetForm}) => {
-        setProgress(0);
-        setUploadVisible(true);
-        const result = await recipes.addImageRecipe(images, 1, (progress) => setProgress(progress));
-        if (!result.ok){
-            setUploadVisible(false);
-            return alert("Un problème est survenue lors de l'envoie")
-        }
-        resetForm();
+  const handleSubmit = async ({ images }, { resetForm }) => {
+    setProgress(0);
+    setUploadVisible(true);
+    const result = await recipes.addImageRecipe(images, 1, (progress) =>
+      setProgress(progress)
+    );
+    if (!result.ok) {
+      setUploadVisible(false);
+      return alert("Un problème est survenue lors de l'envoie");
     }
+    resetForm();
+  };
   return (
     <Screen style={styles.container}>
-        <UploadScreen onDone={() => setUploadVisible(false)} progress={progress} visible={uploadVisible} />
+      <UploadScreen
+        onDone={() => setUploadVisible(false)}
+        progress={progress}
+        visible={uploadVisible}
+      />
       <AppForm
         initialValues={{
           title: "",
@@ -89,7 +88,7 @@ function ListingEditScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
+    marginHorizontal: appTheme.SIZES.padding,
   },
 });
 
