@@ -3,10 +3,17 @@ import { TextInput, View, StyleSheet, Platform } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import defaultStyles from "../config/styles";
 import appTheme from "../constants/theme";
+import { useTheme } from "@react-navigation/native";
 
 function AppTextInput({ icon, width = "100%", ...otherProps }) {
+  const { colors } = useTheme();
   return (
-    <View style={[styles.container, { width }]}>
+    <View
+      style={[
+        styles.container,
+        { width, backgroundColor: colors.secondBackground },
+      ]}
+    >
       {icon && (
         <MaterialCommunityIcons
           name={icon}
@@ -17,7 +24,7 @@ function AppTextInput({ icon, width = "100%", ...otherProps }) {
       )}
       <TextInput
         placeholderTextColor={defaultStyles.colors.meduim}
-        style={defaultStyles.text}
+        style={[defaultStyles.text, { color: colors.primary }]}
         {...otherProps}
       />
     </View>
@@ -26,7 +33,6 @@ function AppTextInput({ icon, width = "100%", ...otherProps }) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: defaultStyles.colors.light,
     borderRadius: appTheme.SIZES.radius,
     flexDirection: "row",
     padding: 15,

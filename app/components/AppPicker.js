@@ -13,6 +13,7 @@ import defaultStyles from "../config/styles";
 import Screen from "./Screen";
 import PickerItem from "./PickerItem";
 import appTheme from "../constants/theme";
+import { useTheme } from "@react-navigation/native";
 
 function AppPicker({
   icon,
@@ -25,10 +26,16 @@ function AppPicker({
   width = "100%",
 }) {
   const [modalVisible, setModalVisible] = useState(false);
+  const { colors } = useTheme();
   return (
     <>
       <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
-        <View style={[styles.container, { width }]}>
+        <View
+          style={[
+            styles.container,
+            { width, backgroundColor: colors.secondBackground },
+          ]}
+        >
           {icon && (
             <MaterialCommunityIcons
               name={icon}
@@ -38,7 +45,9 @@ function AppPicker({
             />
           )}
           {selectedItem ? (
-            <Text style={styles.text}>{selectedItem.name}</Text>
+            <Text style={[styles.text, { color: colors.primary }]}>
+              {selectedItem.name}
+            </Text>
           ) : (
             <Text style={styles.placeholder}>{placeholder}</Text>
           )}
@@ -76,7 +85,6 @@ function AppPicker({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: defaultStyles.colors.light,
     borderRadius: appTheme.SIZES.radius,
     flexDirection: "row",
     padding: 15,

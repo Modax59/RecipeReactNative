@@ -9,6 +9,8 @@ import {
 import colors from "../config/colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import { useTheme } from "@react-navigation/native";
+import appTheme from "../constants/theme";
 
 function ImageInput({ imageUri, onChangeImage }) {
   useEffect(() => {
@@ -42,12 +44,15 @@ function ImageInput({ imageUri, onChangeImage }) {
       console.log("Erreur lors de lecture de image", error);
     }
   };
+  const { colors } = useTheme();
   return (
     <TouchableWithoutFeedback onPress={handlePress}>
-      <View style={styles.container}>
+      <View
+        style={[styles.container, { backgroundColor: colors.secondBackground }]}
+      >
         {!imageUri && (
           <MaterialCommunityIcons
-            color={colors.meduim}
+            color={appTheme.COLORS.gray}
             name="camera"
             size={40}
           />
@@ -61,7 +66,6 @@ function ImageInput({ imageUri, onChangeImage }) {
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    backgroundColor: colors.light,
     borderRadius: 15,
     height: 100,
     justifyContent: "center",
