@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, View, TextInput } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-const SearchBar = () => {
+const SearchBar = ({ onChange }) => {
   const { colors } = useTheme();
   return (
     <View
@@ -24,6 +24,7 @@ const SearchBar = () => {
           lineHeight: 22,
           color: colors.primary,
         }}
+        onChangeText={onChange}
         placeholderTextColor="#777777"
         placeholder="Search Recipes"
       />

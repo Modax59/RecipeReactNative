@@ -1,9 +1,9 @@
 import React from "react";
 import { StyleSheet, Text, TouchableWithoutFeedback } from "react-native";
 
-export default function ButtonWoFeedBack({ text, color }) {
+export default function ButtonWoFeedBack({ text, color, onPress }) {
   return (
-    <TouchableWithoutFeedback>
+    <TouchableWithoutFeedback onPress={onPress}>
       <Text
         style={{
           color: color,

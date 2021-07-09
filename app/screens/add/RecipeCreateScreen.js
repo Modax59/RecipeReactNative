@@ -18,14 +18,20 @@ import UploadScreen from "../UploadScreen";
 import appTheme from "../../constants/theme";
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required().min(1).label("Titre"),
+  name: Yup.string()
+    .required("Le nom de la recette est obligatoire")
+    .min(1)
+    .label("Titre"),
   preparingTime: Yup.number()
-    .required()
+    .required("Le temps de préparation est obligatoire")
     .min(1)
     .max(10000)
     .label("Temps de préparation"),
   description: Yup.string().label("Description"),
-  category: Yup.object().required().nullable().label("Categories"),
+  category: Yup.object()
+    .required("Vous devez choisir une catégorie")
+    .nullable()
+    .label("Categories"),
   image: Yup.mixed().required("Selectionnez au moins une image"),
 });
 

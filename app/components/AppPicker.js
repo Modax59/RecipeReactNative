@@ -89,6 +89,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     padding: 15,
     marginVertical: 10,
+    ...appTheme.SHADOW.base,
   },
   icon: {
     marginRight: 10,

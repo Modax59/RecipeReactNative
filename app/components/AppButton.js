@@ -7,7 +7,7 @@ import appTheme from "../constants/theme";
 function AppButton({
   title,
   onPress,
-  color = "primary",
+  color = [appTheme.COLORS.darkGreen, appTheme.COLORS.lime],
   buttonContainerStyle,
 }) {
   return (

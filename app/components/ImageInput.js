@@ -70,6 +70,7 @@ const styles = StyleSheet.create({
     height: 100,
     justifyContent: "center",
     width: 100,
+    ...appTheme.SHADOW.base,
     overflow: "hidden",
   },
   image: {

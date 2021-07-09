@@ -7,9 +7,10 @@ import routes from "./routes";
 
 const Stack = createStackNavigator();
 
-const FeedNavigator = () => (
+const HomeNavigator = () => (
   <Stack.Navigator mode="modal" screenOptions={{ headerShown: false }}>
-    <Stack.Screen name={routes.LISTINGS} component={ListingScreen} />
+    <Stack.Screen name={routes.HOMEPAGE} component={HomeScreen} />
+
     <Stack.Screen
       name={routes.LISTING_DETAILS}
       component={ListingDetailsScreen}
@@ -17,4 +18,4 @@ const FeedNavigator = () => (
   </Stack.Navigator>
 );
 
-export default FeedNavigator;
+export default HomeNavigator;

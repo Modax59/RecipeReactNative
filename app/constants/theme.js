@@ -67,6 +67,20 @@ export const FONTS = {
   body5: { fontSize: SIZES.body5, lineHeight: 22 },
 };
 
-const appTheme = { COLORS, SIZES, FONTS };
+export const SHADOW = {
+  base: {
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5,
+  },
+};
+
+const appTheme = { COLORS, SIZES, FONTS, SHADOW };
 
 export default appTheme;

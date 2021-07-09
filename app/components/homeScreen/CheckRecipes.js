@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
 import appTheme from "../../constants/theme";
 import ButtonWoFeedBack from "../ButtonWoFeedBack";
-const CheckRecipes = () => {
+const CheckRecipes = ({ onPress }) => {
   return (
     <View style={styles.container}>
       <Image
@@ -16,6 +16,7 @@ const CheckRecipes = () => {
         <ButtonWoFeedBack
           color={appTheme.COLORS.darkGreen}
           text="See Recipes"
+          onPress={onPress}
         />
       </View>
     </View>

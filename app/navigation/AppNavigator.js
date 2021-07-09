@@ -8,7 +8,7 @@ import HomeScreen from "../screens/HomeScreen";
 import appTheme from "../constants/theme";
 import { useTheme } from "@react-navigation/native";
 import routes from "./routes";
-import ListingScreen from "../screens/ListingScreen";
+import HomeNavigator from "./HomeNavigator";
 
 const Tab = createBottomTabNavigator();
 
@@ -32,7 +32,7 @@ const AppNavigator = () => {
     >
       <Tab.Screen
         name={routes.HOMEPAGE}
-        component={HomeScreen}
+        component={HomeNavigator}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <TabIcon icon="home" focused={focused} size={size} />
@@ -49,8 +49,8 @@ const AppNavigator = () => {
         }}
       />
       <Tab.Screen
-        name={routes.ACCOUNT}
-        component={AccountNavigator}
+        name={routes.LISTINGS}
+        component={FeedNavigator}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <TabIcon icon="bookmark" focused={focused} size={size} />
@@ -58,8 +58,8 @@ const AppNavigator = () => {
         }}
       />
       <Tab.Screen
-        name={routes.LISTINGS}
-        component={ListingScreen}
+        name={routes.ACCOUNT}
+        component={AccountNavigator}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <TabIcon icon="cog" focused={focused} size={size} />

@@ -9,11 +9,14 @@ import HorizontalCard from "../components/HorizontalCard";
 import routes from "../navigation/routes";
 import { useTheme } from "@react-navigation/native";
 import HorizontalCardContentLoader from "../components/contentLoader/HorizontalCardContentLoader";
-import HeaderHome from "../components/homeScreen/HeaderHome";
-import SearchBar from "../components/homeScreen/SearchBar";
-import CheckRecipes from "../components/homeScreen/CheckRecipes";
-import TrendingRecipe from "../components/homeScreen/TrendingRecipe";
-import CategoryHeader from "../components/homeScreen/CategoryHeader";
+
+import {
+  CategoryHeader,
+  TrendingRecipe,
+  CheckRecipes,
+  SearchBar,
+  HeaderHome,
+} from "../components/homeScreen";
 import appTheme from "../constants/theme";
 
 function HomeScreen({ navigation }) {
@@ -48,7 +51,9 @@ function HomeScreen({ navigation }) {
             <View>
               <HeaderHome />
               <SearchBar />
-              <CheckRecipes />
+              <CheckRecipes
+                onPress={() => navigation.navigate(routes.LISTINGS)}
+              />
               <TrendingRecipe
                 navigation={navigation}
                 data={getRecipesApi.data}
