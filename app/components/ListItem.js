@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import colors from "../config/colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import appTheme from "../constants/theme";
 
 function ListItem({
   title,
@@ -64,13 +65,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   image: {
-    width: 40,
-    height: 40,
+    width: 80,
+    height: 80,
     borderRadius: 35,
   },
   title: {
     fontWeight: "500",
-    fontSize: 14,
+    ...appTheme.FONTS.body3,
     paddingBottom: 5,
   },
   subtitle: {

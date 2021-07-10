@@ -9,6 +9,8 @@ import appTheme from "../constants/theme";
 import { useTheme } from "@react-navigation/native";
 import routes from "./routes";
 import HomeNavigator from "./HomeNavigator";
+import ListingMyRecipesScreen from "../screens/ListingMyRecipesScreen";
+import NewListingButton from "./NewListingButton";
 
 const Tab = createBottomTabNavigator();
 
@@ -40,17 +42,36 @@ const AppNavigator = () => {
         }}
       />
       <Tab.Screen
-        name={routes.CREATE_RECIPE}
-        component={RecipeCreateScreen}
+        name={routes.LISTINGS}
+        component={FeedNavigator}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
-            <TabIcon icon="book-plus" focused={focused} size={size} />
+            <TabIcon icon="magnify" focused={focused} size={size} />
           ),
         }}
       />
       <Tab.Screen
-        name={routes.LISTINGS}
-        component={FeedNavigator}
+        name="RecipeCreate"
+        component={RecipeCreateScreen}
+        options={({ navigation, focused }) => ({
+          tabBarButton: () => (
+            <NewListingButton
+              focus={focused}
+              onPress={() => navigation.navigate(routes.CREATE_RECIPE)}
+            />
+          ),
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="plus-circle-outline"
+              color={color}
+              size={size}
+            />
+          ),
+        })}
+      />
+      <Tab.Screen
+        name={routes.LISTING_MY_RECIPES}
+        component={ListingMyRecipesScreen}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <TabIcon icon="bookmark" focused={focused} size={size} />
@@ -73,22 +94,5 @@ const AppNavigator = () => {
 export default AppNavigator;
 
 /*
-<Tab.Screen
-      name="RecipeCreate"
-      component={RecipeCreateScreen}
-      options={({ navigation }) => ({
-        tabBarButton: () => (
-          <NewListingButton
-            onPress={() => navigation.navigate(routes.CREATE_RECIPE)}
-          />
-        ),
-        tabBarIcon: ({ color, size }) => (
-          <MaterialCommunityIcons
-            name="plus-circle"
-            color={color}
-            size={size}
-          />
-        ),
-      })}
-    />
+
  */

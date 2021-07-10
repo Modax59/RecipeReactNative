@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, View, TextInput } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import appTheme from "../../constants/theme";
 const SearchBar = ({ onChange }) => {
   const { colors } = useTheme();
   return (
@@ -14,6 +15,7 @@ const SearchBar = ({ onChange }) => {
         paddingHorizontal: 12,
         borderRadius: 10,
         backgroundColor: colors.secondBackground,
+        ...appTheme.SHADOW.base,
       }}
     >
       <MaterialCommunityIcons name="magnify" size={20} color="#777777" />
