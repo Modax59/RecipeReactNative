@@ -13,6 +13,7 @@ import HorizontalCard from "../components/HorizontalCard";
 import appTheme from "../constants/theme";
 import SearchBar from "../components/homeScreen/SearchBar";
 import { useTheme } from "@react-navigation/native";
+import RecipeSearch from "../components/search/RecipeSearch";
 
 function ListingScreen({ navigation }) {
   const { colors } = useTheme();
@@ -23,13 +24,7 @@ function ListingScreen({ navigation }) {
     request();
   }, []);
 
-  const handleSearch = search
-    ? data.filter(
-        (recipe) =>
-          recipe.name.toLowerCase().includes(search.toLowerCase()) ||
-          recipe.preparingTime.toString().includes(search.toLowerCase())
-      )
-    : data;
+  const handleSearch = RecipeSearch(search, data);
 
   return (
     <>
