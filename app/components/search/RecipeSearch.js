@@ -2,8 +2,8 @@ const RecipeSearch = (searchValue, data) => {
   return searchValue
     ? data.filter(
         (recipe) =>
-          recipe.name.toLowerCase().includes(search.toLowerCase()) ||
-          recipe.preparingTime.toString().includes(search.toLowerCase())
+          recipe.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+          recipe.preparingTime.toString().includes(searchValue.toLowerCase())
       )
     : data;
 };
