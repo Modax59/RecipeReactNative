@@ -24,7 +24,7 @@ function HomeScreen({ navigation }) {
   const getRecipesApi = useApi(recipesApi.getRecipes);
   const [refreshing, setRefreshing] = useState(false);
   useEffect(() => {
-    getRecipesApi.request();
+    getRecipesApi.request(true);
   }, []);
 
   return (
@@ -34,7 +34,10 @@ function HomeScreen({ navigation }) {
         {getRecipesApi.error && (
           <>
             <Text>Les recettes n'ont pas pu etre chargés.</Text>
-            <AppButton title="Reessayer" onPress={getRecipesApi.request} />
+            <AppButton
+              title="Reessayer"
+              onPress={() => getRecipesApi.request(true)}
+            />
           </>
         )}
         <FlatList
@@ -42,7 +45,7 @@ function HomeScreen({ navigation }) {
           keyExtractor={(recipe) => recipe.id.toString()}
           refreshing={refreshing}
           onRefresh={() => {
-            getRecipesApi.request();
+            getRecipesApi.request(true);
             setRefreshing(false);
           }}
           ListEmptyComponent={() => <HorizontalCardContentLoader />}

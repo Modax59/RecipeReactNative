@@ -2,9 +2,12 @@ import client from "./client";
 
 const endpoint = "/recipes";
 
-const getRecipes = () => client.get(endpoint);
+const getRecipes = (pagination) =>
+  client.get(endpoint + "?pagination=" + pagination);
 
 const getMyRecipes = (id) => client.get(endpoint + "?user=" + id);
+
+const getRecipeBySearch = (name) => client.get(endpoint + "?name=" + name);
 
 const addRecipe = ({ name, description, uriCategory, time }) =>
   client.post(endpoint, {
@@ -32,4 +35,5 @@ export default {
   addImageRecipe,
   addRecipe,
   getMyRecipes,
+  getRecipeBySearch,
 };

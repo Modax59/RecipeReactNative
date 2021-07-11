@@ -18,17 +18,18 @@ import RecipeSearch from "../components/search/RecipeSearch";
 function ListingScreen({ navigation }) {
   const { colors } = useTheme();
   const [search, setSearch] = useState("");
-  const { data, loading, error, request } = useApi(recipesApi.getRecipes);
+  const { data, loading, error, request } = useApi(
+    recipesApi.getRecipeBySearch
+  );
   const [refreshing, setRefreshing] = useState(false);
   useEffect(() => {
-    request();
-  }, []);
+    request(search);
+  }, [search]);
 
-  const handleSearch = RecipeSearch(search, data);
+  //const handleSearch = RecipeSearch(search, data);
 
   return (
     <>
-      <ActivityIndicator visible={loading} />
       <Screen style={{ backgroundColor: colors.background }}>
         <View style={{ marginBottom: 10 }}>
           <SearchBar onChange={(text) => setSearch(text)} />
@@ -39,16 +40,17 @@ function ListingScreen({ navigation }) {
             <AppButton
               color={[appTheme.COLORS.darkGreen, appTheme.COLORS.lime]}
               title="Reessayer"
-              onPress={request}
+              onPress={() => request(search)}
             />
           </>
         )}
         <FlatList
-          data={handleSearch}
+          data={data}
           keyExtractor={(recipe) => recipe.id.toString()}
           refreshing={refreshing}
+          ListFooterComponent={<View style={{ marginVertical: 38 }}></View>}
           onRefresh={() => {
-            request();
+            request(search);
             setRefreshing(false);
           }}
           renderItem={({ item }) => (
