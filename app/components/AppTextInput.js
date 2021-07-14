@@ -5,13 +5,14 @@ import defaultStyles from "../config/styles";
 import appTheme from "../constants/theme";
 import { useTheme } from "@react-navigation/native";
 
-function AppTextInput({ icon, width = "100%", ...otherProps }) {
+function AppTextInput({ icon, width = "100%", styleContainer, ...otherProps }) {
   const { colors } = useTheme();
   return (
     <View
       style={[
         styles.container,
         { width, backgroundColor: colors.secondBackground },
+        styleContainer,
       ]}
     >
       {icon && (

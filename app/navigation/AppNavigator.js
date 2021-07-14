@@ -11,6 +11,7 @@ import routes from "./routes";
 import HomeNavigator from "./HomeNavigator";
 import ListingMyRecipesScreen from "../screens/ListingMyRecipesScreen";
 import NewListingButton from "./NewListingButton";
+import MyListingsNavigator from "./MyListingsNavigator";
 
 const Tab = createBottomTabNavigator();
 
@@ -71,7 +72,7 @@ const AppNavigator = () => {
       />
       <Tab.Screen
         name={routes.LISTING_MY_RECIPES}
-        component={ListingMyRecipesScreen}
+        component={MyListingsNavigator}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <TabIcon icon="bookmark" focused={focused} size={size} />

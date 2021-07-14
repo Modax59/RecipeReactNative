@@ -4,6 +4,7 @@ export default Object.freeze({
   LISTING_EDIT: "ListingEdit",
   LISTING_MY_RECIPES: "ListingMyRecipes",
   CREATE_RECIPE: "RecipeCreate",
+  RECIPE_EDIT: "RecipeEdit",
   HOMEPAGE: "Homepage",
   LOGIN: "Login",
   REGISTER: "Register",

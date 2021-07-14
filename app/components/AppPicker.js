@@ -46,7 +46,7 @@ function AppPicker({
           )}
           {selectedItem ? (
             <Text style={[styles.text, { color: colors.primary }]}>
-              {selectedItem.name}
+              {selectedItem.name ? selectedItem.name : selectedItem}
             </Text>
           ) : (
             <Text style={styles.placeholder}>{placeholder}</Text>
