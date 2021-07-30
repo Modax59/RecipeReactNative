@@ -15,8 +15,7 @@ import recipes from "../../api/recipes";
 export default function StepScreen({ route, navigation }) {
   const [hasError, sethasError] = useState(false);
   const [loading, setLoading] = useState(false);
-  const recipesSteps = route.params;
-  console.log(recipesSteps);
+  const recipe = route.params;
   const createStep = () => ({
     instruction: "",
     stepOrder: "",
@@ -44,7 +43,7 @@ export default function StepScreen({ route, navigation }) {
       element.stepOrder = index;
     });
 
-    const result = await recipes.addSteps(140, values.steps);
+    const result = await recipes.addSteps(recipe.id, values.steps);
     if (result.ok) {
       setLoading(false);
       navigation.goBack();
@@ -56,7 +55,7 @@ export default function StepScreen({ route, navigation }) {
         <Text style={styles.text}>Intitulé des étapes</Text>
       </View>
       <Formik
-        initialValues={{ steps: [...recipesSteps] }}
+        initialValues={{ steps: [...recipe.recipeSteps] }}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
@@ -94,12 +93,15 @@ export default function StepScreen({ route, navigation }) {
                 />
               </View>
             ))}
-            <Button
-              onPress={() =>
-                setFieldValue("steps", [...values.steps, createStep()])
-              }
-              title="Ajouter une étape"
-            />
+            <View style={styles.add}>
+              <Button
+                color={appTheme.COLORS.black}
+                onPress={() =>
+                  setFieldValue("steps", [...values.steps, createStep()])
+                }
+                title="Ajouter une étape"
+              />
+            </View>
             <View style={styles.button}>
               {hasError && (
                 <Text style={styles.error}>
@@ -135,6 +137,13 @@ export default function StepScreen({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
+  add: {
+    marginHorizontal: appTheme.SIZES.padding,
+    padding: 3,
+    backgroundColor: appTheme.COLORS.lightGreen,
+    borderRadius: appTheme.SIZES.radius,
+    marginBottom: 10,
+  },
   container: {
     flexDirection: "row",
     alignItems: "center",

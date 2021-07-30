@@ -21,7 +21,7 @@ import recipes from "../../api/recipes";
 export default function IngredientScreen({ route, navigation }) {
   const [loading, setLoading] = useState(false);
   const [hasError, sethasError] = useState(false);
-  const recipesIngredients = route.params;
+  const recipe = route.params;
   const getIngredientApi = useApi(ingredientsApi.getIngredients);
   const getUnitApi = useApi(unitApi.getUnits);
 
@@ -73,7 +73,7 @@ export default function IngredientScreen({ route, navigation }) {
 
   const handleSubmit = async (values) => {
     setLoading(true);
-    const result = await recipes.addIngredient(140, values.ingredients);
+    const result = await recipes.addIngredient(recipe.id, values.ingredients);
     if (result.ok) {
       setLoading(false);
       navigation.goBack();
@@ -92,7 +92,7 @@ export default function IngredientScreen({ route, navigation }) {
         <Text style={styles.text}>Unité</Text>
       </View>
       <Formik
-        initialValues={{ ingredients: [...recipesIngredients] }}
+        initialValues={{ ingredients: [...recipe.recipeIngredients] }}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
@@ -164,15 +164,18 @@ export default function IngredientScreen({ route, navigation }) {
                 />
               </View>
             ))}
-            <Button
-              onPress={() => {
-                setFieldValue("ingredients", [
-                  ...values.ingredients,
-                  createIngredient(),
-                ]);
-              }}
-              title="Ajouter un ingredient"
-            />
+            <View style={styles.add}>
+              <Button
+                color={appTheme.COLORS.black}
+                onPress={() => {
+                  setFieldValue("ingredients", [
+                    ...values.ingredients,
+                    createIngredient(),
+                  ]);
+                }}
+                title="Ajouter un ingredient"
+              />
+            </View>
             <View style={styles.button}>
               {hasError && (
                 <Text style={styles.error}>
@@ -192,6 +195,7 @@ export default function IngredientScreen({ route, navigation }) {
                   const { ingredients } = errors;
                   sethasError(false);
                   if (ingredients != undefined) {
+                    console.log(ingredients);
                     ingredients.forEach((element) => {
                       if (element != undefined) {
                         sethasError(true);
@@ -210,6 +214,13 @@ export default function IngredientScreen({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
+  add: {
+    marginHorizontal: appTheme.SIZES.padding,
+    padding: 3,
+    backgroundColor: appTheme.COLORS.lightGreen,
+    borderRadius: appTheme.SIZES.radius,
+    marginBottom: 10,
+  },
   container: {
     flexDirection: "row",
     alignItems: "center",

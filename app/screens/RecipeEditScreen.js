@@ -28,6 +28,7 @@ import useApi from "../hooks/useApi";
 
 import routes from "../navigation/routes";
 import UploadScreen from "./UploadScreen";
+import RecipeLineSection from "../components/RecipeLineSection";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string()
@@ -52,9 +53,11 @@ const RecipeEditScreen = ({ route, navigation }) => {
   const { data, loading, error, request } = useApi(recipeApi.getRecipe);
 
   useEffect(() => {
-    getCategoryApi.request();
-    request(recipeItem.id);
-  }, []);
+    navigation.addListener("focus", () => {
+      getCategoryApi.request();
+      request(recipeItem.id);
+    });
+  }, [navigation]);
 
   const initialValuesEnd = {
     name: data.name,
@@ -157,23 +160,18 @@ const RecipeEditScreen = ({ route, navigation }) => {
           />
           <SubmitButton title="Enregistrer" />
         </AppForm>
-        <HeaderSectionList name="Ingredients" datas={data?.recipeIngredients} />
-        <Button
-          onPress={() =>
-            navigation.navigate(
-              routes.RECIPE_INGREDIENT,
-              data.recipeIngredients
-            )
-          }
-          title="Modifier les ingredients"
-        />
-        <HeaderSectionList name="Etapes" datas={data.recipeSteps} />
-        <Button
-          onPress={() =>
-            navigation.navigate(routes.RECIPE_STEP, data.recipeSteps)
-          }
-          title="Modifier les etapes"
-        />
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <RecipeLineSection
+            name="Ingredients"
+            datas={data?.recipeIngredients}
+            onPress={() => navigation.navigate(routes.RECIPE_INGREDIENT, data)}
+          />
+          <RecipeLineSection
+            name="Etapes"
+            datas={data.recipeSteps}
+            onPress={() => navigation.navigate(routes.RECIPE_STEP, data)}
+          />
+        </View>
         <View style={{ marginVertical: 100 }}></View>
       </ScrollView>
     </View>
@@ -181,7 +179,6 @@ const RecipeEditScreen = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {},
   stepContainer: {
     marginBottom: 150,
   },
