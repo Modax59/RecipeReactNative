@@ -6,6 +6,7 @@ import HomeScreen from "../screens/HomeScreen";
 import routes from "./routes";
 import ListingMyRecipesScreen from "../screens/ListingMyRecipesScreen";
 import RecipeEditScreen from "../screens/RecipeEditScreen";
+import RecipeNavigator from "./RecipeNavigator";
 
 const Stack = createStackNavigator();
 
@@ -15,11 +16,7 @@ const MyListingsNavigator = () => (
       name={routes.LISTING_MY_RECIPES}
       component={ListingMyRecipesScreen}
     />
-    <Stack.Screen
-      options={{ headerShown: true, headerTitle: "Modifier la recette" }}
-      name={routes.RECIPE_EDIT}
-      component={RecipeEditScreen}
-    />
+    <Stack.Screen name={routes.RECIPE_EDIT} component={RecipeNavigator} />
   </Stack.Navigator>
 );
 

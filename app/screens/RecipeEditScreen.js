@@ -1,173 +1,198 @@
 import { Formik } from "formik";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
+  FlatList,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
-  TouchableOpacity,
   View,
 } from "react-native";
 import * as Yup from "yup";
 import categoryApi from "../api/categoryApi";
-import ingredientsApi from "../api/ingredientsApi";
-import unitApi from "../api/unitApi";
-import AppPicker from "../components/AppPicker";
-import AppTextInput from "../components/AppTextInput";
-import DeleteButton from "../components/buttons/DeleteButton";
+import recipeApi from "../api/recipes";
+import ActivityIndicator from "../components/ActivityIndicator";
 import CategoryPickerItem from "../components/CategoryPickerItem";
-import IngredientPickerItem from "../components/IngredientPickerItem";
-import UnitPickerItem from "../components/UnitPickerItem";
+import HeaderSectionList from "../components/HeaderSectionList";
+import IngredientItem from "../components/IngredientItem";
+import {
+  AppForm,
+  AppFormField,
+  AppFormPicker,
+  SubmitButton,
+} from "../components/forms";
+import AppFormSingleImagePicker from "../components/forms/AppFormSingleImagePicker";
 import appTheme from "../constants/theme";
 import useApi from "../hooks/useApi";
 
-const createIngredient = () => ({
-  name: "",
-  quantity: "",
-  unit: "",
-});
-
-const createStep = () => ({
-  text: "",
-  step: "",
-});
+import routes from "../navigation/routes";
+import UploadScreen from "./UploadScreen";
 
 const validationSchema = Yup.object().shape({
-  ARRAY: Yup.array().of(
-    Yup.object().shape({
-      key1: Yup.string().trim().max(2000).required().label("Link"),
-      key2: Yup.string().required().min(5).max(255).label("Name"),
-    })
-  ),
+  name: Yup.string()
+    .required("Le nom de la recette est obligatoire")
+    .min(1)
+    .label("Titre"),
+  preparingTime: Yup.number()
+    .required("Le temps de préparation est obligatoire")
+    .min(1)
+    .max(10000)
+    .label("Temps de préparation"),
+  description: Yup.string().label("Description"),
+  category: Yup.object().nullable().label("Categories"),
+  image: Yup.mixed(),
 });
 
-const RecipeEditScreen = () => {
-  const getIngredientApi = useApi(ingredientsApi.getIngredients);
-  const getUnitApi = useApi(unitApi.getUnits);
+const RecipeEditScreen = ({ route, navigation }) => {
+  const { recipeItem } = route.params;
+  const [uploadVisible, setUploadVisible] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const getCategoryApi = useApi(categoryApi.getCategory);
+  const { data, loading, error, request } = useApi(recipeApi.getRecipe);
 
   useEffect(() => {
-    getIngredientApi.request();
-    getUnitApi.request();
+    getCategoryApi.request();
+    request(recipeItem.id);
   }, []);
 
+  const initialValuesEnd = {
+    name: data.name,
+    description: "" + data.Description,
+    preparingTime: "" + data.preparingTime,
+    category: "" + data ? data.category.name : "",
+    image: null,
+  };
+
+  const handleSubmit = async (recipe) => {
+    setProgress(0);
+    setUploadVisible(true);
+    const { name, description } = recipe;
+    const { preparingTime } = recipe;
+    const time = parseInt(preparingTime);
+    let uriCategory = null;
+    if (recipe.category != initialValuesEnd.category) {
+      const { category } = recipe;
+      uriCategory = "/api/categories/" + category.id;
+    }
+    const recipeData = {
+      name,
+      description,
+      uriCategory,
+      time,
+      id: recipeItem.id,
+    };
+    const result = await recipeApi.editRecipe(recipeData);
+    if (result.ok) {
+      if (recipe.image) {
+        const { image } = recipe;
+        const resultImage = await recipeApi.addImageRecipe(
+          image,
+          result.data["id"],
+          (progress) => setProgress(progress)
+        );
+        if (!resultImage.ok) {
+          setUploadVisible(false);
+          return alert("Un problème est survenue lors de l'envoie");
+        }
+      }
+      setProgress(100);
+      initialValuesEnd.image = null;
+      request(recipeItem.id);
+    }
+    if (!result.ok) {
+      console.log(result);
+      return alert(result.data.message);
+    }
+  };
+
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <Formik
-        initialValues={{ ingredients: [], steps: [] }}
-        validationSchema={validationSchema}
-        onSubmit={(values) => console.log(values)}
-      >
-        {({
-          handleChange,
-          handleBlur,
-          handleSubmit,
-          values,
-          setFieldValue,
-        }) => (
-          <>
-            <View>
-              {values.ingredients.map((ingredient, index) => (
-                <View style={styles.container} key={index}>
-                  <AppPicker
-                    numberOfColumns="3"
-                    width="40%"
-                    PickerItemComponent={IngredientPickerItem}
-                    items={getIngredientApi.data}
-                    onSelectItem={({ name }) => {
-                      setFieldValue(`ingredients[${index}].name`, name);
-                      console.log(values.ingredients[index].name);
-                    }}
-                    placeholder="Ingredients"
-                    selectedItem={values.ingredients[index].name}
-                  />
-                  <AppTextInput
-                    keyboardType="numeric"
-                    onChangeText={handleChange(
-                      `ingredients[${index}].quantity`
-                    )}
-                    onBlur={handleBlur(`ingredients[${index}].quantity`)}
-                    value={values.ingredients[index].quantity}
-                    placeholder="100"
-                    width="20%"
-                  />
-                  <AppPicker
-                    numberOfColumns="3"
-                    width="25%"
-                    PickerItemComponent={UnitPickerItem}
-                    items={getUnitApi.data}
-                    onSelectItem={({ name }) => {
-                      setFieldValue(`ingredients[${index}].unit`, name);
-                      console.log(values.ingredients[index].unit);
-                    }}
-                    placeholder="Unité"
-                    selectedItem={values.ingredients[index].unit}
-                  />
-                  <DeleteButton
-                    onPress={() => {
-                      setFieldValue(
-                        "ingredients",
-                        values.ingredients.filter(
-                          (ingredientObj) => ingredientObj !== ingredient
-                        )
-                      );
-                    }}
-                  />
-                </View>
-              ))}
-              <Button
-                onPress={() =>
-                  setFieldValue("ingredients", [
-                    ...values.ingredients,
-                    createIngredient(),
-                  ])
-                }
-                title="Ajouter un ingredient"
+    <View style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false} style={{ padding: 20 }}>
+        <UploadScreen
+          onDone={() => setUploadVisible(false)}
+          progress={progress}
+          visible={uploadVisible}
+        />
+        <ActivityIndicator visible={loading} />
+        <AppForm
+          initialValues={initialValuesEnd}
+          onSubmit={handleSubmit}
+          validationSchema={validationSchema}
+        >
+          <View style={styles.images}>
+            {data.fileUrl && (
+              <Image
+                source={{ uri: "http://127.0.0.1:8000" + data.fileUrl }}
+                style={styles.image}
               />
-            </View>
-            <View style={styles.stepContainer}>
-              {values.steps.map((step, index) => (
-                <View style={styles.container} key={index}>
-                  <AppTextInput
-                    onChangeText={handleChange(`steps[${index}].text`)}
-                    value={values.steps[index].text}
-                    placeholder="Ajouter de l'eau..."
-                    width="80%"
-                    multiline
-                  />
-                  <DeleteButton
-                    onPress={() => {
-                      setFieldValue(
-                        "steps",
-                        values.steps.filter((stepObj) => stepObj !== step)
-                      );
-                    }}
-                  />
-                </View>
-              ))}
-              <Button
-                onPress={() =>
-                  setFieldValue("steps", [...values.steps, createStep()])
-                }
-                title="Ajouter une étape"
-              />
-              <Button onPress={handleSubmit} title="Envoyer" />
-            </View>
-          </>
-        )}
-      </Formik>
-    </ScrollView>
+            )}
+            <AppFormSingleImagePicker name="image" />
+          </View>
+          <AppFormField
+            maxLength={255}
+            name="name"
+            placeholder="Nom de la recette"
+          />
+          <AppFormField
+            keyboardType="numeric"
+            maxLength={8}
+            name="preparingTime"
+            placeholder="Temps de préparation (mins)"
+          />
+          <AppFormPicker
+            numberOfColumns={3}
+            items={getCategoryApi.data}
+            name="category"
+            placeholder="Categories"
+            width="50%"
+            PickerItemComponent={CategoryPickerItem}
+          />
+          <AppFormField
+            maxLength={255}
+            multiline
+            name="description"
+            numberOfLines={3}
+            placeholder="Description"
+          />
+          <SubmitButton title="Enregistrer" />
+        </AppForm>
+        <HeaderSectionList name="Ingredients" datas={data?.recipeIngredients} />
+        <Button
+          onPress={() =>
+            navigation.navigate(
+              routes.RECIPE_INGREDIENT,
+              data.recipeIngredients
+            )
+          }
+          title="Modifier les ingredients"
+        />
+        <HeaderSectionList name="Etapes" datas={data.recipeSteps} />
+        <Button
+          onPress={() =>
+            navigation.navigate(routes.RECIPE_STEP, data.recipeSteps)
+          }
+          title="Modifier les etapes"
+        />
+        <View style={{ marginVertical: 100 }}></View>
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-around",
-  },
+  container: {},
   stepContainer: {
     marginBottom: 150,
+  },
+  image: {
+    height: 100,
+    width: 100,
+    borderRadius: 15,
+    marginRight: 20,
+  },
+  images: {
+    flexDirection: "row",
   },
 });
 

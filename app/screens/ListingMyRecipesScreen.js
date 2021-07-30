@@ -60,7 +60,12 @@ const ListingMyRecipesScreen = ({ navigation }) => {
               }}
               item={item}
               image={"http://127.0.0.1:8000" + item.fileUrl}
-              onPress={() => navigation.navigate(routes.RECIPE_EDIT, item)}
+              onPress={() =>
+                navigation.navigate(routes.RECIPE_EDIT, {
+                  screen: routes.RECIPE_EDIT,
+                  params: { recipeItem: item },
+                })
+              }
             />
           )}
         />

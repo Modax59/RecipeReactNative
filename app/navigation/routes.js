@@ -5,6 +5,8 @@ export default Object.freeze({
   LISTING_MY_RECIPES: "ListingMyRecipes",
   CREATE_RECIPE: "RecipeCreate",
   RECIPE_EDIT: "RecipeEdit",
+  RECIPE_INGREDIENT: "RecipeIngredient",
+  RECIPE_STEP: "RecipeStep",
   HOMEPAGE: "Homepage",
   LOGIN: "Login",
   REGISTER: "Register",

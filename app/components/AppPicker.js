@@ -23,6 +23,7 @@ function AppPicker({
   onSelectItem,
   selectedItem,
   placeholder,
+  textSize = 18,
   width = "100%",
 }) {
   const [modalVisible, setModalVisible] = useState(false);
@@ -45,11 +46,18 @@ function AppPicker({
             />
           )}
           {selectedItem ? (
-            <Text style={[styles.text, { color: colors.primary }]}>
+            <Text
+              style={[
+                styles.text,
+                { color: colors.primary, fontSize: textSize },
+              ]}
+            >
               {selectedItem.name ? selectedItem.name : selectedItem}
             </Text>
           ) : (
-            <Text style={styles.placeholder}>{placeholder}</Text>
+            <Text style={[styles.placeholder, { fontSize: textSize }]}>
+              {placeholder}
+            </Text>
           )}
 
           <MaterialCommunityIcons
@@ -97,10 +105,8 @@ const styles = StyleSheet.create({
   placeholder: {
     color: defaultStyles.colors.meduim,
     flex: 1,
-    fontSize: 18,
   },
   text: {
-    fontSize: 18,
     flex: 1,
   },
 });

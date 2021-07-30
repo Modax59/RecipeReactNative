@@ -8,7 +8,7 @@ import routes from "./routes";
 const Stack = createStackNavigator();
 
 const HomeNavigator = () => (
-  <Stack.Navigator mode="modal" screenOptions={{ headerShown: false }}>
+  <Stack.Navigator mode="card" screenOptions={{ headerShown: false }}>
     <Stack.Screen name={routes.HOMEPAGE} component={HomeScreen} />
 
     <Stack.Screen

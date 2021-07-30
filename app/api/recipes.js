@@ -7,6 +7,8 @@ const getRecipes = (pagination) =>
 
 const getMyRecipes = (id) => client.get(endpoint + "?user=" + id);
 
+const getRecipe = (id) => client.get(endpoint + "/" + id);
+
 const getRecipeBySearch = (name) => client.get(endpoint + "?name=" + name);
 
 const addRecipe = ({ name, description, uriCategory, time }) =>
@@ -16,6 +18,29 @@ const addRecipe = ({ name, description, uriCategory, time }) =>
     preparingTime: time,
     category: uriCategory,
   });
+
+const addIngredient = (id, values) =>
+  client.post("/recipe_ingredients/" + id + "/ingredients", values);
+
+const addSteps = (id, values) =>
+  client.post("/recipe_steps/" + id + "/steps", values);
+
+const editRecipe = ({ name, description, uriCategory = null, time, id }) =>
+  client.put(
+    endpoint + "/" + id,
+    uriCategory == null
+      ? {
+          name: name,
+          Description: description,
+          preparingTime: time,
+        }
+      : {
+          name: name,
+          Description: description,
+          preparingTime: time,
+          category: uriCategory,
+        }
+  );
 
 const addImageRecipe = (image, id, onUploadProgess) => {
   const data = new FormData();
@@ -31,7 +56,11 @@ const addImageRecipe = (image, id, onUploadProgess) => {
 };
 
 export default {
+  addIngredient,
+  addSteps,
   getRecipes,
+  editRecipe,
+  getRecipe,
   addImageRecipe,
   addRecipe,
   getMyRecipes,

@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
+  Animated,
   FlatList,
   StyleSheet,
   Text,
@@ -10,138 +11,260 @@ import ListIngredients from "../components/ListIngredients";
 import ListItem from "../components/ListItem";
 import colors from "../config/colors";
 import { Ionicons } from "@expo/vector-icons";
-import { Image } from "react-native-expo-image-cache";
+import { BlurView } from "expo-blur";
+import appTheme from "../constants/theme";
+import useApi from "../hooks/useApi";
+import recipesApi from "../api/recipes";
+import IngredientItem from "../components/IngredientItem";
+import Icon from "../components/Icon";
+import HeaderSectionList from "../components/HeaderSectionList";
+import RecipeInfo from "../components/RecipeInfo";
 
-const ingredientsData = [
-  {
-    id: 1,
-    name: "Eggs",
-    unit: "2 Pcs",
-    image: require("../assets/potato.png"),
-  },
-  {
-    id: 2,
-    name: "Potato",
-    unit: "1/2 Kg",
-    image: require("../assets/potato.png"),
-  },
-  {
-    id: 3,
-    name: "Parmesan Cheese",
-    unit: "300 g",
-    image: require("../assets/potato.png"),
-  },
-  {
-    id: 4,
-    name: "Fresh Shrimp",
-    unit: "1/2 kg",
-    image: require("../assets/potato.png"),
-  },
-  {
-    id: 5,
-    name: "Tomato Ketchup",
-    unit: "6 Tbsp",
-    image: require("../assets/potato.png"),
-  },
-];
+const HEADER_HEIGHT = 350;
 
-function ListingDetailsScreen({ route }) {
-  const listing = route.params;
+function ListingDetailsScreen({ route, navigation }) {
+  let recipeItem = route.params;
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const { data, loading, error, request } = useApi(recipesApi.getRecipe);
+  useEffect(() => {
+    request(recipeItem.id);
+  }, []);
+
   return (
-    <View>
-      <View style={styles.backIcon}>
-        <TouchableOpacity onPress={() => console.log("back")}>
-          <Ionicons
-            name="chevron-back-circle-outline"
-            size={32}
-            color="white"
+    <View style={{ flex: 1, backgroundColor: appTheme.COLORS.white }}>
+      <Animated.FlatList
+        data={data?.recipeIngredients}
+        keyExtractor={(item) => item.id.toString()}
+        showsVerticalScrollIndicator={false}
+        ListHeaderComponent={
+          <View>
+            <View
+              style={{
+                marginTop: -1000,
+                paddingTop: 1000,
+                alignItems: "center",
+                overflow: "hidden",
+              }}
+            >
+              <Animated.Image
+                source={{ uri: "http://127.0.0.1:8000" + recipeItem.fileUrl }}
+                resizeMode="contain"
+                style={{
+                  height: HEADER_HEIGHT,
+                  width: "200%",
+                  transform: [
+                    {
+                      translateY: scrollY.interpolate({
+                        inputRange: [-HEADER_HEIGHT, 0, HEADER_HEIGHT],
+                        outputRange: [
+                          -HEADER_HEIGHT / 2,
+                          0,
+                          HEADER_HEIGHT * 0.75,
+                        ],
+                      }),
+                    },
+                    {
+                      scale: scrollY.interpolate({
+                        inputRange: [-HEADER_HEIGHT, 0, HEADER_HEIGHT],
+                        outputRange: [2, 1, 0.75],
+                      }),
+                    },
+                  ],
+                }}
+              />
+              <Animated.View
+                style={{
+                  position: "absolute",
+                  bottom: 10,
+                  left: 30,
+                  right: 30,
+                  height: 80,
+                  transform: [
+                    {
+                      translateY: scrollY.interpolate({
+                        inputRange: [0, 170, 250],
+                        outputRange: [0, 0, 100],
+                        extrapolate: "clamp",
+                      }),
+                    },
+                  ],
+                }}
+              >
+                <BlurView
+                  intensity={90}
+                  tint="dark"
+                  style={{
+                    overflow: "hidden",
+                    flex: 1,
+                    borderRadius: appTheme.SIZES.radius,
+                  }}
+                >
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
+                    <View style={{ flex: 1, marginHorizontal: 20 }}>
+                      <Text
+                        style={{
+                          color: appTheme.COLORS.lightGray2,
+                          ...appTheme.FONTS.body4,
+                        }}
+                      >
+                        Recipe By
+                      </Text>
+                      <Text
+                        style={{
+                          color: appTheme.COLORS.white2,
+                          ...appTheme.FONTS.h3,
+                        }}
+                      >
+                        {!data?.user?.userInformations
+                          ? "User Anonyme"
+                          : data.user.userInformations.firstName}
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      style={{
+                        width: 30,
+                        height: 30,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginRight: 20,
+                        borderRadius: 5,
+                        borderWidth: 1,
+                        borderColor: appTheme.COLORS.lightGreen1,
+                      }}
+                      onPress={() => console.log("View Profile")}
+                    >
+                      <Icon
+                        name="arrow-right"
+                        size={30}
+                        iconColor={appTheme.COLORS.lightGreen1}
+                        backgroundColor={appTheme.COLORS.transparent}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </BlurView>
+              </Animated.View>
+            </View>
+            <RecipeInfo recipe={recipeItem} />
+            <HeaderSectionList
+              name="Ingredients"
+              datas={data?.recipeIngredients}
+            />
+          </View>
+        }
+        ListFooterComponentStyle={{
+          marginBottom: 100,
+        }}
+        ListFooterComponent={
+          <HeaderSectionList name="Etapes" datas={data?.recipeSteps} />
+        }
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true }
+        )}
+        renderItem={({ item }) => (
+          <View
+            style={{
+              flexDirection: "row",
+              paddingHorizontal: 30,
+              marginVertical: 5,
+            }}
+          >
+            <IngredientItem
+              item={item}
+              image={"http://127.0.0.1:8000" + item.ingredient.fileUrl}
+            />
+          </View>
+        )}
+      />
+      <View
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 90,
+          flexDirection: "row",
+          alignItems: "flex-end",
+          justifyContent: "space-between",
+          paddingHorizontal: appTheme.SIZES.padding,
+          paddingBottom: 10,
+        }}
+      >
+        <Animated.View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: appTheme.COLORS.black,
+            opacity: scrollY.interpolate({
+              inputRange: [HEADER_HEIGHT - 100, HEADER_HEIGHT - 70],
+              outputRange: [0, 1],
+            }),
+          }}
+        />
+        <Animated.View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            alignItems: "center",
+            justifyContent: "flex-end",
+            paddingBottom: 10,
+            opacity: scrollY.interpolate({
+              inputRange: [HEADER_HEIGHT - 100, HEADER_HEIGHT - 50],
+              outputRange: [0, 1],
+            }),
+            transform: [
+              {
+                translateY: scrollY.interpolate({
+                  inputRange: [HEADER_HEIGHT - 100, HEADER_HEIGHT - 50],
+                  outputRange: [50, 0],
+                  extrapolate: "clamp",
+                }),
+              },
+            ],
+          }}
+        >
+          <Text style={{ color: appTheme.COLORS.white2, ...appTheme.FONTS.h3 }}>
+            {recipeItem?.name}
+          </Text>
+        </Animated.View>
+        <TouchableOpacity
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            height: 35,
+            width: 35,
+            borderRadius: 18,
+            borderWidth: 1,
+            borderColor: appTheme.COLORS.lightGray,
+            backgroundColor: appTheme.COLORS.transparentBlack5,
+          }}
+          onPress={() => navigation.goBack()}
+        >
+          <Icon
+            name="arrow-left"
+            size={30}
+            iconColor={appTheme.COLORS.lightGray}
+            backgroundColor={appTheme.COLORS.transparent}
           />
         </TouchableOpacity>
-      </View>
-      <Image
-        style={styles.image}
-        tint="light"
-        preview={{ uri: "http://127.0.0.1:8000" + listing.fileUrl }}
-        uri={"http://127.0.0.1:8000" + listing.fileUrl}
-      />
-      <View style={styles.detailsContainer}>
-        <View style={styles.name}>
-          <Text style={styles.title}>{listing.title}</Text>
-          <ListItem
-            image={require("../assets/men.jpg")}
-            title="John Doe"
-            subtitle="18 recettes"
-          />
-        </View>
-        <Text style={styles.preparingTime}>30 mins | 2 personnes</Text>
-        <View style={styles.ingredients}>
-          <Text style={styles.titleIngredients}>Ingredients</Text>
-          <Text style={styles.items}>5 item</Text>
-        </View>
-        <FlatList
-          data={ingredientsData}
-          keyExtractor={(ingredientsData) => ingredientsData.id.toString()}
-          renderItem={({ item }) => (
-            <ListIngredients
-              name={item.name}
-              unit={item.unit}
-              image={item.image}
-            />
-          )}
-        />
       </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  backIcon: {
-    zIndex: 5,
-    position: "absolute",
-    top: 40,
-    left: 25,
-  },
-  image: {
-    width: "100%",
-    height: 280,
-  },
-  name: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  detailsContainer: {
-    padding: 25,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: "600",
-    flexBasis: 200,
-    color: colors.black_blue,
-  },
-  preparingTime: {
-    color: colors.grey,
-    fontWeight: "300",
-    fontSize: 14,
-    marginVertical: 10,
-  },
-  userContainer: {
-    marginVertical: 50,
-  },
-  titleIngredients: {
-    flexBasis: 280,
-    fontSize: 18,
-    fontWeight: "600",
-    color: colors.black_blue,
-  },
-  ingredients: {
-    paddingTop: 20,
-    flexDirection: "row",
-    paddingBottom: 25,
-  },
-  items: {
-    fontSize: 14,
-    color: colors.grey,
-  },
-});
+const styles = StyleSheet.create({});
 
 export default ListingDetailsScreen;
